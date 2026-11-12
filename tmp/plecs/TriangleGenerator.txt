@@ -1,0 +1,35 @@
+Component {
+              Type          TriangleGenerator
+              Name          "Triangular Wave"
+              LibraryKeywords "sawtooth triangle"
+              Show          on
+              Position      [190, 125]
+              Direction     right
+              Flipped       off
+              LabelPosition south
+              Parameter {
+                Variable      "Min"
+                Value         "-0.5"
+                Show          off
+              }
+              Parameter {
+                Variable      "Max"
+                Value         "0.5"
+                Show          off
+              }
+              Parameter {
+                Variable      "f"
+                Value         "1"
+                Show          off
+              }
+              Parameter {
+                Variable      "DutyCycle"
+                Value         "0.5"
+                Show          off
+              }
+              Parameter {
+                Variable      "Delay"
+                Value         "0"
+                Show          off
+              }
+            }

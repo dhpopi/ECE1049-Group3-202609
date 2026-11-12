@@ -1,0 +1,19 @@
+Component {
+              Type          Capacitor
+              Name          "C1"
+              Show          on
+              Position      [155, 50]
+              Direction     down
+              Flipped       on
+              LabelPosition west
+              Parameter {
+                Variable      "C"
+                Value         "100e-6"
+                Show          off
+              }
+              Parameter {
+                Variable      "v_init"
+                Value         "0"
+                Show          off
+              }
+            }

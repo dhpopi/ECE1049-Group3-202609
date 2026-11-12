@@ -1,0 +1,15 @@
+Component {
+          Type          SignalDemux
+          Name          "Demux"
+          LibraryKeywords "demux"
+          Show          off
+          Position      [90, 35]
+          Direction     right
+          Flipped       on
+          LabelPosition south
+          Parameter {
+            Variable      "Width"
+            Value         "3"
+            Show          off
+          }
+        }

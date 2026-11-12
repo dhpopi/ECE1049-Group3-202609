@@ -1,0 +1,24 @@
+Component {
+              Type          ACVoltageSource
+              Name          "V_ac"
+              Show          on
+              Position      [205, 45]
+              Direction     down
+              Flipped       on
+              LabelPosition east
+              Parameter {
+                Variable      "V"
+                Value         "1"
+                Show          off
+              }
+              Parameter {
+                Variable      "w"
+                Value         "2*pi*50"
+                Show          off
+              }
+              Parameter {
+                Variable      "phi"
+                Value         "0"
+                Show          off
+              }
+            }

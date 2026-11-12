@@ -1,0 +1,29 @@
+Component {
+              Type          ThreePhaseVoltageSource
+              Name          "V_3ph"
+              Show          on
+              Position      [205, 45]
+              Direction     up
+              Flipped       off
+              LabelPosition south
+              Parameter {
+                Variable      "V"
+                Value         "1"
+                Show          off
+              }
+              Parameter {
+                Variable      "w"
+                Value         "50"
+                Show          off
+              }
+              Parameter {
+                Variable      "phi"
+                Value         "0"
+                Show          off
+              }
+              Parameter {
+                Variable      "neutral"
+                Value         "1"
+                Show          off
+              }
+            }

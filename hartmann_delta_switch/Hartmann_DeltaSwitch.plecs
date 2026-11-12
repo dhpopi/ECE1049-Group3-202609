@@ -1,0 +1,3313 @@
+Plecs {
+  Name          "Hartmann_DeltaSwitch"
+  Version       "4.9"
+  CircuitModel  "ContStateSpace"
+  StartTime     "0"
+  TimeSpan      "Tstop"
+  Timeout       ""
+  Solver        "auto"
+  MaxStep       "1/(fsw*10)"
+  InitStep      "-1"
+  FixedStep     "1e-7"
+  Refine        "1"
+  ZCStepSize    "1e-10"
+  RelTol        "1e-6"
+  AbsTol        "1e-8"
+  TurnOnThreshold "0"
+  NonIdealSwitchResistance "1"
+  SyncFixedStepTasks "2"
+  UseSingleCommonBaseRate "2"
+  LossVariableLimitExceededMsg "3"
+  NegativeSwitchLossMsg "3"
+  DivisionByZeroMsg "2"
+  DatatypeOverflowMsg "2"
+  DatatypeInheritanceConflictMsg "1"
+  ContSampleTimeConflictMsg "1"
+  StiffnessDetectionMsg "2"
+  MaxConsecutiveZCs "1000"
+  AlgebraicLoopWithStateMachineMsg "2"
+  AssertionAction "1"
+  FixedPointDatatypeOverride "1"
+  InitializationCommands "% Hartmann et al., IEEE TIE 2012, Fig.1(b), Fig.6, T"
+"able III.\n% Paper simulation: 115 Vrms phase, 800 Hz, 400 Vdc, 5 kW, 72 kHz,"
+" 330 uH.\nVph=115; fline=800; Vref=400; Pnom=5000; fsw=72000;\nLboost=330e-6;"
+" Cdc=18*82e-6; Rload=Vref^2/Pnom;\n% Engineering assumptions: small winding r"
+"esistance and ideal semiconductor losses.\nRL=0.02; Rsw=0.001; Rd=0.001; Vd=0"
+";\n% Physical-unit current gain for ~4 kHz bandwidth; paper kp=0.25 uses unst"
+"ated scaling.\nKcurrent=2*pi*4000*Lboost;\n% Outer PI: 20 Hz natural frequenc"
+"y, zeta~0.707, conductance output in S.\nKpv=2*0.707*(2*pi*20)*Cdc*Vref/(3*Vp"
+"h^2);\nKiv=(2*pi*20)^2*Cdc*Vref/(3*Vph^2);\nGmax=0.25; Ginit=Pnom/(3*Vph^2);"
+"\n% Precharged capacitor; this baseline is not an inrush/precharge-hardware s"
+"imulation.\nVinit=400; Tstop=0.12;\n"
+  InitialState  "1"
+  SystemState   ""
+  TaskingMode   "1"
+  TaskConfigurations ""
+  CodeGenParameterInlining "2"
+  CodeGenFloatingPointFormat "2"
+  CodeGenAbsTimeUsageMsg "3"
+  CodeGenBaseName ""
+  CodeGenOutputDir ""
+  CodeGenExtraOpts ""
+  CodeGenTarget "Generic"
+  CodeGenTargetSettings ""
+  ExtendedMatrixPrecision "1"
+  MatrixSignificanceCheck "2"
+  RemoveUnusedStateSpaceOutputs "1"
+  EnableStateSpaceSplitting "2"
+  DisplayStateSpaceSplitting "1"
+  DiscretizationMethod "2"
+  ExternalModeSettings ""
+  AlgebraicLoopMethod "1"
+  AlgebraicLoopTolerance "1e-6"
+  ScriptsDialogGeometry ""
+  ScriptsDialogSplitterPos "0"
+  Terminal {
+    Type          Output
+    Index         "1"
+  }
+  Schematic {
+    Location      [0, 23; 3115, 1214]
+    ZoomFactor    1.70753
+    SliderPosition [0, 14]
+    ShowBrowser   off
+    BrowserWidth  100
+    Component {
+      Type          ThreePhaseVoltageSource
+      Name          "Grid_115Vrms"
+      Show          on
+      Position      [75, 190]
+      Direction     up
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "V"
+        Value         "sqrt(2)*Vph"
+        Show          off
+      }
+      Parameter {
+        Variable      "w"
+        Value         "fline"
+        Show          off
+      }
+      Parameter {
+        Variable      "phi"
+        Value         "pi/2"
+        Show          off
+      }
+      Parameter {
+        Variable      "neutral"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          Ground
+      Name          "Neutral"
+      Show          off
+      Position      [35, 505]
+      Direction     up
+      Flipped       off
+      LabelPosition south
+    }
+    Component {
+      Type          Resistor
+      Name          "Rw1"
+      Show          on
+      Position      [180, 140]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "R"
+        Value         "RL"
+        Show          off
+      }
+    }
+    Component {
+      Type          Inductor
+      Name          "L1"
+      Show          on
+      Position      [260, 140]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "L"
+        Value         "Lboost"
+        Show          off
+      }
+      Parameter {
+        Variable      "i_init"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Ammeter
+      Name          "I1"
+      Show          on
+      Position      [330, 140]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+    }
+    Component {
+      Type          Voltmeter
+      Name          "V1"
+      Show          on
+      Position      [150, 330]
+      Direction     up
+      Flipped       off
+      LabelPosition south
+    }
+    Component {
+      Type          Label
+      Name          "I1_AC1_2"
+      Show          off
+      Position      [390, 140]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "AC1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "I1_i1_3"
+      Show          off
+      Position      [330, 105]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "i1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "V1_v1_3"
+      Show          off
+      Position      [200, 330]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "v1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Resistor
+      Name          "Rw2"
+      Show          on
+      Position      [180, 190]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "R"
+        Value         "RL"
+        Show          off
+      }
+    }
+    Component {
+      Type          Inductor
+      Name          "L2"
+      Show          on
+      Position      [260, 190]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "L"
+        Value         "Lboost"
+        Show          off
+      }
+      Parameter {
+        Variable      "i_init"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Ammeter
+      Name          "I2"
+      Show          on
+      Position      [330, 190]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+    }
+    Component {
+      Type          Voltmeter
+      Name          "V2"
+      Show          on
+      Position      [120, 395]
+      Direction     up
+      Flipped       off
+      LabelPosition south
+    }
+    Component {
+      Type          Label
+      Name          "I2_AC2_2"
+      Show          off
+      Position      [390, 190]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "AC2"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "I2_i2_3"
+      Show          off
+      Position      [330, 155]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "i2"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "V2_v2_3"
+      Show          off
+      Position      [200, 395]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "v2"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Resistor
+      Name          "Rw3"
+      Show          on
+      Position      [180, 240]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "R"
+        Value         "RL"
+        Show          off
+      }
+    }
+    Component {
+      Type          Inductor
+      Name          "L3"
+      Show          on
+      Position      [260, 240]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "L"
+        Value         "Lboost"
+        Show          off
+      }
+      Parameter {
+        Variable      "i_init"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Ammeter
+      Name          "I3"
+      Show          on
+      Position      [330, 240]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+    }
+    Component {
+      Type          Voltmeter
+      Name          "V3"
+      Show          on
+      Position      [95, 460]
+      Direction     up
+      Flipped       off
+      LabelPosition south
+    }
+    Component {
+      Type          Label
+      Name          "I3_AC3_2"
+      Show          off
+      Position      [390, 240]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "AC3"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "I3_i3_3"
+      Show          off
+      Position      [330, 205]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "i3"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "V3_v3_3"
+      Show          off
+      Position      [200, 460]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "v3"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Diode
+      Name          "D1p"
+      Show          on
+      Position      [510, 150]
+      Direction     down
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Vf"
+        Value         "Vd"
+        Show          off
+      }
+      Parameter {
+        Variable      "Ron"
+        Value         "Rd"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "SwitchModel"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "f_grid"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Diode
+      Name          "D1n"
+      Show          on
+      Position      [510, 260]
+      Direction     down
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Vf"
+        Value         "Vd"
+        Show          off
+      }
+      Parameter {
+        Variable      "Ron"
+        Value         "Rd"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "SwitchModel"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "f_grid"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Label
+      Name          "Bridge_AC1"
+      Show          off
+      Position      [475, 205]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "Tag"
+        Value         "AC1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Diode
+      Name          "D2p"
+      Show          on
+      Position      [620, 150]
+      Direction     down
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Vf"
+        Value         "Vd"
+        Show          off
+      }
+      Parameter {
+        Variable      "Ron"
+        Value         "Rd"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "SwitchModel"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "f_grid"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Diode
+      Name          "D2n"
+      Show          on
+      Position      [620, 260]
+      Direction     down
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Vf"
+        Value         "Vd"
+        Show          off
+      }
+      Parameter {
+        Variable      "Ron"
+        Value         "Rd"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "SwitchModel"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "f_grid"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Label
+      Name          "Bridge_AC2"
+      Show          off
+      Position      [585, 205]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "Tag"
+        Value         "AC2"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Diode
+      Name          "D3p"
+      Show          on
+      Position      [730, 150]
+      Direction     down
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Vf"
+        Value         "Vd"
+        Show          off
+      }
+      Parameter {
+        Variable      "Ron"
+        Value         "Rd"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "SwitchModel"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "f_grid"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Diode
+      Name          "D3n"
+      Show          on
+      Position      [730, 260]
+      Direction     down
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Vf"
+        Value         "Vd"
+        Show          off
+      }
+      Parameter {
+        Variable      "Ron"
+        Value         "Rd"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "SwitchModel"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "f_grid"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Label
+      Name          "Bridge_AC3"
+      Show          off
+      Position      [695, 205]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "Tag"
+        Value         "AC3"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Capacitor
+      Name          "Cdc_1476uF"
+      Show          on
+      Position      [895, 205]
+      Direction     down
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "C"
+        Value         "Cdc"
+        Show          off
+      }
+      Parameter {
+        Variable      "v_init"
+        Value         "Vinit"
+        Show          off
+      }
+    }
+    Component {
+      Type          Resistor
+      Name          "Load_5kW"
+      Show          on
+      Position      [960, 205]
+      Direction     down
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "R"
+        Value         "Rload"
+        Show          off
+      }
+    }
+    Component {
+      Type          Voltmeter
+      Name          "Vdc"
+      Show          on
+      Position      [1060, 205]
+      Direction     up
+      Flipped       off
+      LabelPosition south
+    }
+    Component {
+      Type          Goto
+      Name          "Vdc_vdc_3"
+      Show          off
+      Position      [1120, 205]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "vdc"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          MosfetWithDiode
+      Name          "S12"
+      Show          on
+      Position      [555, 445]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "Ron"
+        Value         "Rsw"
+        Show          off
+      }
+      Parameter {
+        Variable      "s_init"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         ""
+        Show          off
+      }
+    }
+    Component {
+      Type          MosfetWithDiode
+      Name          "S21"
+      Show          on
+      Position      [675, 445]
+      Direction     right
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "Ron"
+        Value         "Rsw"
+        Show          off
+      }
+      Parameter {
+        Variable      "s_init"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         ""
+        Show          off
+      }
+    }
+    Component {
+      Type          Label
+      Name          "S12_AC1_1"
+      Show          off
+      Position      [500, 445]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "Tag"
+        Value         "AC1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Label
+      Name          "S21_AC2_1"
+      Show          off
+      Position      [730, 445]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "AC2"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "S12_s12_3"
+      Show          off
+      Position      [555, 485]
+      Direction     up
+      Flipped       off
+      LabelPosition east
+      Parameter {
+        Variable      "Tag"
+        Value         "s12"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "S21_s21_3"
+      Show          off
+      Position      [675, 405]
+      Direction     down
+      Flipped       off
+      LabelPosition west
+      Parameter {
+        Variable      "Tag"
+        Value         "s21"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          MosfetWithDiode
+      Name          "S23"
+      Show          on
+      Position      [555, 545]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "Ron"
+        Value         "Rsw"
+        Show          off
+      }
+      Parameter {
+        Variable      "s_init"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         ""
+        Show          off
+      }
+    }
+    Component {
+      Type          MosfetWithDiode
+      Name          "S32"
+      Show          on
+      Position      [675, 545]
+      Direction     right
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "Ron"
+        Value         "Rsw"
+        Show          off
+      }
+      Parameter {
+        Variable      "s_init"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         ""
+        Show          off
+      }
+    }
+    Component {
+      Type          Label
+      Name          "S23_AC2_1"
+      Show          off
+      Position      [500, 545]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "Tag"
+        Value         "AC2"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Label
+      Name          "S32_AC3_1"
+      Show          off
+      Position      [730, 545]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "AC3"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "S23_s23_3"
+      Show          off
+      Position      [555, 580]
+      Direction     up
+      Flipped       off
+      LabelPosition east
+      Parameter {
+        Variable      "Tag"
+        Value         "s23"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "S32_s32_3"
+      Show          off
+      Position      [675, 505]
+      Direction     down
+      Flipped       off
+      LabelPosition west
+      Parameter {
+        Variable      "Tag"
+        Value         "s32"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          MosfetWithDiode
+      Name          "S13"
+      Show          on
+      Position      [555, 635]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "Ron"
+        Value         "Rsw"
+        Show          off
+      }
+      Parameter {
+        Variable      "s_init"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         ""
+        Show          off
+      }
+    }
+    Component {
+      Type          MosfetWithDiode
+      Name          "S31"
+      Show          on
+      Position      [675, 635]
+      Direction     right
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "Ron"
+        Value         "Rsw"
+        Show          off
+      }
+      Parameter {
+        Variable      "s_init"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         ""
+        Show          off
+      }
+    }
+    Component {
+      Type          Label
+      Name          "S13_AC1_1"
+      Show          off
+      Position      [500, 635]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "Tag"
+        Value         "AC1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Label
+      Name          "S31_AC3_1"
+      Show          off
+      Position      [730, 635]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "AC3"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "S13_s13_3"
+      Show          off
+      Position      [555, 685]
+      Direction     up
+      Flipped       off
+      LabelPosition east
+      Parameter {
+        Variable      "Tag"
+        Value         "s13"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "S31_s31_3"
+      Show          off
+      Position      [675, 595]
+      Direction     down
+      Flipped       off
+      LabelPosition west
+      Parameter {
+        Variable      "Tag"
+        Value         "s31"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          CScript
+      Name          "Hartmann_Control"
+      Show          on
+      Position      [960, 385]
+      Direction     up
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "DialogGeometry"
+        Value         "[1319 468 457 324]"
+        Show          off
+      }
+      Parameter {
+        Variable      "NumInputs"
+        Value         "[3 3 1 1]"
+        Show          off
+      }
+      Parameter {
+        Variable      "NumOutputs"
+        Value         "[6 3 1]"
+        Show          off
+      }
+      Parameter {
+        Variable      "NumContStates"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NumDiscStates"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "NumZCSignals"
+        Value         "11"
+        Show          off
+      }
+      Parameter {
+        Variable      "DirectFeedthrough"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Ts"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "TerminalBasedSampleTimes"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Parameters"
+        Value         "Vref,Kcurrent,Kpv,Kiv,Gmax,Ginit"
+        Show          off
+      }
+      Parameter {
+        Variable      "LangStandard"
+        Value         "2"
+        Show          off
+      }
+      Parameter {
+        Variable      "GnuExtensions"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "RuntimeCheck"
+        Value         "2"
+        Show          off
+      }
+      Parameter {
+        Variable      "HighlightLevel"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "Declarations"
+        Value         "#include <math.h>\n"
+"#define PAR(i) ParamRealData(i,0)\n"
+"static double limit(double x,double lo,double hi) { return x<lo?lo:(x>hi?hi:x"
+"); }\n"
+"static int a[6]={0,1,1,2,0,2};\n"
+"static int b[6]={1,0,2,1,2,0};\n"
+        Show          off
+      }
+      Parameter {
+        Variable      "StartFcn"
+        Value         "ContState(0)=PAR(5);"
+        Show          off
+      }
+      Parameter {
+        Variable      "OutputFcn"
+        Value         "double v[3], vr[3];\n"
+"double err=PAR(0)-InputSignal(2,0);\n"
+"double raw=ContState(0)+PAR(2)*err;\n"
+"double g=limit(raw,0,PAR(4));\n"
+"double vo=fmax(InputSignal(2,0),50.0);\n"
+"for(int k=0;k<3;k++) {\n"
+" v[k]=InputSignal(1,k);\n"
+" double ir=g*v[k];\n"
+" OutputSignal(1,k)=ir;\n"
+" vr[k]=v[k]-PAR(1)*(ir-InputSignal(0,k));\n"
+" ZCSignal(6+k)=v[k];\n"
+"}\n"
+"for(int k=0;k<6;k++) {\n"
+" double z=InputSignal(3,0)-(vr[a[k]]-vr[b[k]])/vo;\n"
+" ZCSignal(k)=z;\n"
+" if(IsMajorStep) {\n"
+"   /* Table III: same-sign phase pair is clamped OFF;\n"
+"      negative-to-positive device is held ON. */\n"
+"   if(v[a[k]]*v[b[k]]>=0) OutputSignal(0,k)=0;\n"
+"   else if(v[a[k]]<0) OutputSignal(0,k)=1;\n"
+"   else OutputSignal(0,k)=z>0;\n"
+" }\n"
+"}\n"
+"OutputSignal(2,0)=g;\n"
+"ZCSignal(9)=raw;\n"
+"ZCSignal(10)=raw-PAR(4);\n"
+        Show          off
+      }
+      Parameter {
+        Variable      "UpdateFcn"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "DerivativeFcn"
+        Value         "double e=PAR(0)-InputSignal(2,0);\n"
+"double raw=ContState(0)+PAR(2)*e;\n"
+"double d=PAR(3)*e;\n"
+"if((raw<=0 && d<0)||(raw>=PAR(4) && d>0)) d=0;\n"
+"ContDeriv(0)=d;\n"
+        Show          off
+      }
+      Parameter {
+        Variable      "TerminateFcn"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "StoreCustomStateFcn"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "RestoreCustomStateFcn"
+        Value         ""
+        Show          off
+      }
+    }
+    Component {
+      Type          SignalMux
+      Name          "i_abc"
+      Show          off
+      Position      [1535, 310]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Width"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "i_abc_i1_1"
+      Show          off
+      Position      [1475, 300]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "i1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "i_abc_i2_2"
+      Show          off
+      Position      [1475, 310]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "i2"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "i_abc_i3_3"
+      Show          off
+      Position      [1475, 320]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "i3"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          SignalMux
+      Name          "v_abc"
+      Show          off
+      Position      [1535, 245]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Width"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "v_abc_v1_1"
+      Show          off
+      Position      [1475, 235]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "v1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "v_abc_v2_2"
+      Show          off
+      Position      [1475, 245]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "v2"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "v_abc_v3_3"
+      Show          off
+      Position      [1475, 255]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "v3"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "Hartmann_Control_vdc_3"
+      Show          off
+      Position      [885, 390]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "vdc"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          TriangleGenerator
+      Name          "Carrier_72kHz"
+      Show          on
+      Position      [1255, 150]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Min"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "Max"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "f"
+        Value         "fsw"
+        Show          off
+      }
+      Parameter {
+        Variable      "DutyCycle"
+        Value         "0.5"
+        Show          off
+      }
+      Parameter {
+        Variable      "Delay"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          SignalDemux
+      Name          "Gate_Demux"
+      Show          off
+      Position      [1475, 150]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "Width"
+        Value         "6"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Gate_Demux_s12_2"
+      Show          off
+      Position      [1565, 175]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "s12"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Gate_Demux_s21_3"
+      Show          off
+      Position      [1565, 165]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "s21"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Gate_Demux_s23_4"
+      Show          off
+      Position      [1565, 155]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "s23"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Gate_Demux_s32_5"
+      Show          off
+      Position      [1565, 145]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "s32"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Gate_Demux_s13_6"
+      Show          off
+      Position      [1565, 135]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "s13"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Gate_Demux_s31_7"
+      Show          off
+      Position      [1565, 125]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "s31"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          SignalMux
+      Name          "Results"
+      Show          off
+      Position      [1340, 435]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Width"
+        Value         "[3 3 1 3 6 1]"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "Results_vdc_3"
+      Show          off
+      Position      [1255, 430]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "vdc"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          Output
+      Name          "SimulationData"
+      Show          on
+      Position      [1400, 435]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Index"
+        Value         "1"
+        Show          on
+      }
+      Parameter {
+        Variable      "Width"
+        Value         "17"
+        Show          off
+      }
+    }
+    Component {
+      Type          Scope
+      Name          "Main_Waveforms"
+      Show          on
+      Position      [1340, 255]
+      Direction     up
+      Flipped       off
+      LabelPosition south
+      Location      [1471, 200; 2471, 968]
+      State         "AAAA/wAAAAD9AAAAAgAAAAEAAAAAAAAAAPwCAAAAA/sAAAAQAFoAbwBvA"
+"G0AQQByAGUAYQAAAAAA/////wAAAKkA////+wAAABQAUwBhAHYAZQBkAFYAaQBlAHcAcwAAAAAA//"
+"///wAAAGMA////+wAAAAwAVAByAGEAYwBlAHMAAAAAAP////8AAABjAP///wAAAAMAAAAAAAAAAPw"
+"BAAAAAfsAAAAUAEQAYQB0AGEAVwBpAGQAZwBlAHQAAAAAAP////8AAABEAP///wAAA+gAAALhAAAA"
+"BAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAEAAAAOAFQAbwBvAGwAQgBhAHIBAAAAAP////8AAAAAA"
+"AAAAA=="
+      SavedViews    "AAAAAgAAAAA="
+      HeaderState   "{\"DefaultSecSize\":0,\"FirstSecSize\":174,\"Labels\":[],"
+"\"VisualIdxs\":[]}"
+      PlotPalettes  "AAAAAQAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAA"
+"AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+"AAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      Axes          "4"
+      TimeRange     "0.005"
+      ScrollingMode "1"
+      SingleTimeAxis "1"
+      Open          "0"
+      Ts            "-1"
+      SampleLimit   "0"
+      XAxisLabel    "Time (s)"
+      ShowLegend    "1"
+      Axis {
+        Name          "v_abc (V)"
+        AutoScale     1
+        MinValue      -1
+        MaxValue      1
+        Signals       {}
+        SignalTypes   [ ]
+        AxisLabel     "v_abc (V)"
+        Untangle      0
+        KeepBaseline  off
+        BaselineValue 0
+      }
+      Axis {
+        Name          "i_abc (A)"
+        AutoScale     1
+        MinValue      -1
+        MaxValue      1
+        Signals       {}
+        SignalTypes   [ ]
+        AxisLabel     "i_abc (A)"
+        Untangle      0
+        KeepBaseline  off
+        BaselineValue 0
+      }
+      Axis {
+        Name          "Vdc (V)"
+        AutoScale     1
+        MinValue      -1
+        MaxValue      1
+        Signals       {}
+        SignalTypes   [ ]
+        AxisLabel     "Vdc (V)"
+        Untangle      0
+        KeepBaseline  off
+        BaselineValue 0
+      }
+      Axis {
+        Name          "i_ref (A)"
+        AutoScale     1
+        MinValue      -1
+        MaxValue      1
+        Signals       {}
+        SignalTypes   [ ]
+        AxisLabel     "i_ref (A)"
+        Untangle      0
+        KeepBaseline  off
+        BaselineValue 0
+      }
+      Fourier {
+        SingleXAxis       on
+        AxisLabel         "Frequency / Hz"
+        Scaling           0
+        PhaseDisplay      0
+        ShowFourierLegend off
+        Axis {
+          Name          ""
+          AutoScale     1
+          MinValue      0
+          MaxValue      1
+          Signals       {}
+          Untangle      0
+          KeepBaseline  off
+          BaselineValue 0
+        }
+        Axis {
+          Name          ""
+          AutoScale     1
+          MinValue      0
+          MaxValue      1
+          Signals       {}
+          Untangle      0
+          KeepBaseline  off
+          BaselineValue 0
+        }
+        Axis {
+          Name          ""
+          AutoScale     1
+          MinValue      0
+          MaxValue      1
+          Signals       {}
+          Untangle      0
+          KeepBaseline  off
+          BaselineValue 0
+        }
+        Axis {
+          Name          ""
+          AutoScale     1
+          MinValue      0
+          MaxValue      1
+          Signals       {}
+          Untangle      0
+          KeepBaseline  off
+          BaselineValue 0
+        }
+      }
+    }
+    Component {
+      Type          From
+      Name          "Main_Waveforms_vdc_3"
+      Show          off
+      Position      [1255, 260]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "vdc"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          Scope
+      Name          "MOSFET_Gates"
+      Show          on
+      Position      [1340, 345]
+      Direction     up
+      Flipped       off
+      LabelPosition south
+      Location      [200, 100; 1200, 859]
+      State         "AAAA/wAAAAD9AAAAAgAAAAEAAAAAAAAAAPwCAAAAA/sAAAAQAFoAbwBvA"
+"G0AQQByAGUAYQAAAAAA/////wAAADEA////+wAAABQAUwBhAHYAZQBkAFYAaQBlAHcAcwAAAAAA//"
+"///wAAAGMA////+wAAAAwAVAByAGEAYwBlAHMAAAAAAP////8AAABjAP///wAAAAMAAAAAAAAAAPw"
+"BAAAAAfsAAAAUAEQAYQB0AGEAVwBpAGQAZwBlAHQAAAAAAP////8AAABEAP///wAAA+gAAALYAAAA"
+"BAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAEAAAAOAFQAbwBvAGwAQgBhAHIBAAAAAP////8AAAAAA"
+"AAAAA=="
+      SavedViews    "AAAAAgAAAAA="
+      HeaderState   "{\"DefaultSecSize\":0,\"FirstSecSize\":172,\"Labels\":[],"
+"\"VisualIdxs\":[]}"
+      PlotPalettes  "AAAAAQAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      Axes          "1"
+      TimeRange     "0.0"
+      ScrollingMode "1"
+      SingleTimeAxis "1"
+      Open          "0"
+      Ts            "-1"
+      SampleLimit   "0"
+      XAxisLabel    "Time (s)"
+      ShowLegend    "1"
+      Axis {
+        Name          "s12 s21 s23 s32 s13 s31"
+        AutoScale     1
+        MinValue      -1
+        MaxValue      1
+        Signals       {}
+        SignalTypes   [ ]
+        AxisLabel     "s12 s21 s23 s32 s13 s31"
+        Untangle      0
+        KeepBaseline  off
+        BaselineValue 0
+      }
+      Fourier {
+        SingleXAxis       on
+        AxisLabel         "Frequency / Hz"
+        Scaling           0
+        PhaseDisplay      0
+        ShowFourierLegend off
+        Axis {
+          Name          ""
+          AutoScale     1
+          MinValue      0
+          MaxValue      1
+          Signals       {}
+          Untangle      0
+          KeepBaseline  off
+          BaselineValue 0
+        }
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Send_Iabc"
+      Show          off
+      Position      [1600, 310]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "Iabc"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "Receive_Iabc_0"
+      Show          off
+      Position      [885, 370]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "Iabc"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "Receive_Iabc_1"
+      Show          off
+      Position      [1255, 420]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "Iabc"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "Receive_Iabc_2"
+      Show          off
+      Position      [1255, 250]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "Iabc"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Send_Vabc"
+      Show          off
+      Position      [1600, 245]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "Vabc"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "Receive_Vabc_0"
+      Show          off
+      Position      [885, 380]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "Vabc"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "Receive_Vabc_1"
+      Show          off
+      Position      [1255, 410]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "Vabc"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "Receive_Vabc_2"
+      Show          off
+      Position      [1255, 240]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "Vabc"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Send_carrier"
+      Show          off
+      Position      [1325, 150]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "carrier"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "Receive_carrier_0"
+      Show          off
+      Position      [885, 400]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "carrier"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Send_gates"
+      Show          off
+      Position      [1030, 375]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "gates"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "Receive_gates_0"
+      Show          off
+      Position      [1435, 150]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "gates"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "Receive_gates_1"
+      Show          off
+      Position      [1255, 450]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "gates"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "Receive_gates_2"
+      Show          off
+      Position      [1255, 345]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "gates"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Send_Iref"
+      Show          off
+      Position      [1030, 385]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "Iref"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "Receive_Iref_0"
+      Show          off
+      Position      [1255, 440]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "Iref"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "Receive_Iref_1"
+      Show          off
+      Position      [1255, 270]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "Iref"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Send_Gref"
+      Show          off
+      Position      [1030, 395]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "Gref"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "Receive_Gref_0"
+      Show          off
+      Position      [1255, 460]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "Gref"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Grid_115Vrms"
+      SrcTerminal   1
+      Points        [95, 140; 150, 140]
+      Branch {
+        DstComponent  "Rw1"
+        DstTerminal   1
+      }
+      Branch {
+        DstComponent  "V1"
+        DstTerminal   1
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Rw1"
+      SrcTerminal   2
+      DstComponent  "L1"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "L1"
+      SrcTerminal   2
+      DstComponent  "I1"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "I1"
+      SrcTerminal   2
+      DstComponent  "I1_AC1_2"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Grid_115Vrms"
+      SrcTerminal   2
+      Points        [120, 190]
+      Branch {
+        DstComponent  "Rw2"
+        DstTerminal   1
+      }
+      Branch {
+        DstComponent  "V2"
+        DstTerminal   1
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Rw2"
+      SrcTerminal   2
+      DstComponent  "L2"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "L2"
+      SrcTerminal   2
+      DstComponent  "I2"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "I2"
+      SrcTerminal   2
+      DstComponent  "I2_AC2_2"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Grid_115Vrms"
+      SrcTerminal   3
+      Points        [95, 240]
+      Branch {
+        DstComponent  "Rw3"
+        DstTerminal   1
+      }
+      Branch {
+        DstComponent  "V3"
+        DstTerminal   1
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Rw3"
+      SrcTerminal   2
+      DstComponent  "L3"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "L3"
+      SrcTerminal   2
+      DstComponent  "I3"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "I3"
+      SrcTerminal   2
+      DstComponent  "I3_AC3_2"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "V1"
+      SrcTerminal   2
+      Points        [35, 350]
+      Branch {
+        Points        [35, 190]
+        DstComponent  "Grid_115Vrms"
+        DstTerminal   4
+      }
+      Branch {
+        Points        [35, 415]
+        Branch {
+          Points        [35, 480]
+          Branch {
+            DstComponent  "Neutral"
+            DstTerminal   1
+          }
+          Branch {
+            DstComponent  "V3"
+            DstTerminal   2
+          }
+        }
+        Branch {
+          DstComponent  "V2"
+          DstTerminal   2
+        }
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "D1p"
+      SrcTerminal   1
+      Points        [510, 205]
+      Branch {
+        DstComponent  "D1n"
+        DstTerminal   2
+      }
+      Branch {
+        DstComponent  "Bridge_AC1"
+        DstTerminal   1
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "D2p"
+      SrcTerminal   1
+      Points        [620, 205]
+      Branch {
+        DstComponent  "D2n"
+        DstTerminal   2
+      }
+      Branch {
+        DstComponent  "Bridge_AC2"
+        DstTerminal   1
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "D3p"
+      SrcTerminal   1
+      Points        [730, 205]
+      Branch {
+        DstComponent  "D3n"
+        DstTerminal   2
+      }
+      Branch {
+        DstComponent  "Bridge_AC3"
+        DstTerminal   1
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "D1p"
+      SrcTerminal   2
+      Points        [510, 100; 840, 100]
+      Branch {
+        Points        [1060, 100]
+        DstComponent  "Vdc"
+        DstTerminal   1
+      }
+      Branch {
+        Points        [840, 135]
+        Branch {
+          Points        [840, 310; 895, 310]
+          Branch {
+            DstComponent  "Cdc_1476uF"
+            DstTerminal   1
+          }
+          Branch {
+            Points        [960, 310]
+            DstComponent  "Load_5kW"
+            DstTerminal   1
+          }
+        }
+        Branch {
+          Points        [730, 135]
+          Branch {
+            DstComponent  "D2p"
+            DstTerminal   2
+          }
+          Branch {
+            DstComponent  "D3p"
+            DstTerminal   2
+          }
+        }
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "D1n"
+      SrcTerminal   1
+      Points        [510, 310; 840, 310]
+      Branch {
+        Points        [1060, 310]
+        DstComponent  "Vdc"
+        DstTerminal   2
+      }
+      Branch {
+        Points        [840, 275]
+        Branch {
+          Points        [840, 100; 895, 100]
+          Branch {
+            DstComponent  "Cdc_1476uF"
+            DstTerminal   2
+          }
+          Branch {
+            Points        [960, 100]
+            DstComponent  "Load_5kW"
+            DstTerminal   2
+          }
+        }
+        Branch {
+          Points        [730, 275]
+          Branch {
+            DstComponent  "D2n"
+            DstTerminal   1
+          }
+          Branch {
+            DstComponent  "D3n"
+            DstTerminal   1
+          }
+        }
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "S12"
+      SrcTerminal   2
+      DstComponent  "S21"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "S12"
+      SrcTerminal   1
+      DstComponent  "S12_AC1_1"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "S21"
+      SrcTerminal   1
+      DstComponent  "S21_AC2_1"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "S23"
+      SrcTerminal   2
+      DstComponent  "S32"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "S23"
+      SrcTerminal   1
+      DstComponent  "S23_AC2_1"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "S32"
+      SrcTerminal   1
+      DstComponent  "S32_AC3_1"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "S13"
+      SrcTerminal   2
+      DstComponent  "S31"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "S13"
+      SrcTerminal   1
+      DstComponent  "S13_AC1_1"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "S31"
+      SrcTerminal   1
+      DstComponent  "S31_AC3_1"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "I1"
+      SrcTerminal   3
+      Points        [330, 105]
+      DstComponent  "I1_i1_3"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "V1"
+      SrcTerminal   3
+      DstComponent  "V1_v1_3"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "I2"
+      SrcTerminal   3
+      Points        [330, 155]
+      DstComponent  "I2_i2_3"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "V2"
+      SrcTerminal   3
+      DstComponent  "V2_v2_3"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "I3"
+      SrcTerminal   3
+      Points        [330, 205]
+      DstComponent  "I3_i3_3"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "V3"
+      SrcTerminal   3
+      DstComponent  "V3_v3_3"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Vdc"
+      SrcTerminal   3
+      DstComponent  "Vdc_vdc_3"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "S12_s12_3"
+      SrcTerminal   1
+      DstComponent  "S12"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "S23_s23_3"
+      SrcTerminal   1
+      DstComponent  "S23"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "S32_s32_3"
+      SrcTerminal   1
+      DstComponent  "S32"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "S13_s13_3"
+      SrcTerminal   1
+      DstComponent  "S13"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "S31_s31_3"
+      SrcTerminal   1
+      DstComponent  "S31"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "i_abc_i1_1"
+      SrcTerminal   1
+      DstComponent  "i_abc"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "i_abc_i2_2"
+      SrcTerminal   1
+      DstComponent  "i_abc"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "i_abc_i3_3"
+      SrcTerminal   1
+      DstComponent  "i_abc"
+      DstTerminal   4
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "i_abc"
+      SrcTerminal   1
+      DstComponent  "Send_Iabc"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Receive_Iabc_0"
+      SrcTerminal   1
+      DstComponent  "Hartmann_Control"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Receive_Iabc_1"
+      SrcTerminal   1
+      DstComponent  "Results"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Receive_Iabc_2"
+      SrcTerminal   1
+      DstComponent  "Main_Waveforms"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "v_abc_v1_1"
+      SrcTerminal   1
+      DstComponent  "v_abc"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "v_abc_v2_2"
+      SrcTerminal   1
+      DstComponent  "v_abc"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "v_abc_v3_3"
+      SrcTerminal   1
+      DstComponent  "v_abc"
+      DstTerminal   4
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "v_abc"
+      SrcTerminal   1
+      DstComponent  "Send_Vabc"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Receive_Vabc_0"
+      SrcTerminal   1
+      DstComponent  "Hartmann_Control"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Receive_Vabc_1"
+      SrcTerminal   1
+      DstComponent  "Results"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Receive_Vabc_2"
+      SrcTerminal   1
+      DstComponent  "Main_Waveforms"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Hartmann_Control_vdc_3"
+      SrcTerminal   1
+      DstComponent  "Hartmann_Control"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Carrier_72kHz"
+      SrcTerminal   1
+      DstComponent  "Send_carrier"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Hartmann_Control"
+      SrcTerminal   5
+      DstComponent  "Send_gates"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Receive_gates_0"
+      SrcTerminal   1
+      DstComponent  "Gate_Demux"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Receive_gates_1"
+      SrcTerminal   1
+      DstComponent  "Results"
+      DstTerminal   6
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Receive_gates_2"
+      SrcTerminal   1
+      DstComponent  "MOSFET_Gates"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Gate_Demux"
+      SrcTerminal   2
+      DstComponent  "Gate_Demux_s12_2"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Gate_Demux"
+      SrcTerminal   3
+      DstComponent  "Gate_Demux_s21_3"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Gate_Demux"
+      SrcTerminal   4
+      DstComponent  "Gate_Demux_s23_4"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Gate_Demux"
+      SrcTerminal   5
+      DstComponent  "Gate_Demux_s32_5"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Gate_Demux"
+      SrcTerminal   6
+      DstComponent  "Gate_Demux_s13_6"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Gate_Demux"
+      SrcTerminal   7
+      DstComponent  "Gate_Demux_s31_7"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Results_vdc_3"
+      SrcTerminal   1
+      DstComponent  "Results"
+      DstTerminal   4
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Hartmann_Control"
+      SrcTerminal   6
+      DstComponent  "Send_Iref"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Receive_Iref_0"
+      SrcTerminal   1
+      DstComponent  "Results"
+      DstTerminal   5
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Receive_Iref_1"
+      SrcTerminal   1
+      DstComponent  "Main_Waveforms"
+      DstTerminal   4
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Hartmann_Control"
+      SrcTerminal   7
+      DstComponent  "Send_Gref"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Receive_Gref_0"
+      SrcTerminal   1
+      DstComponent  "Results"
+      DstTerminal   7
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Results"
+      SrcTerminal   1
+      DstComponent  "SimulationData"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Main_Waveforms_vdc_3"
+      SrcTerminal   1
+      DstComponent  "Main_Waveforms"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "S21_s21_3"
+      SrcTerminal   1
+      DstComponent  "S21"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Receive_carrier_0"
+      SrcTerminal   1
+      DstComponent  "Hartmann_Control"
+      DstTerminal   4
+    }
+    Annotation {
+      Name          "<html><body>\n<p align=\"center\">Hartmann 2012 | Three-p"
+"hase Delta-switch rectifier | 5 kW</p></body></html>"
+      Position      [400, 35]
+    } 
+    Annotation {
+      Name          "<html><body>\n<p align=\"center\">Delta branches: common-"
+"source MOSFET pairs with body diodes</p></body></html>"
+      Position      [625, 360]
+    } 
+    Annotation {
+      Name          "<html><body>\n<p align=\"center\">Fig.6: voltage PI + pha"
+"se current P + voltage feedforward + star/delta + Table III PWM</p></body></h"
+"tml>"
+      Position      [1440, 85]
+    } 
+    Annotation {
+      Name          "<html><body>\n<p align=\"center\">Baseline: precharged 40"
+"0 V bus; no EMI filter or thermal model. Parameters: Simulation &gt; Simulati"
+"on Parameters &gt; Initialization.</p></body></html>"
+      Position      [1155, 630]
+    } 
+  }
+}
