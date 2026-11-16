@@ -1,9 +1,0 @@
-Component {
-              Type          Ground
-              Name          "Ground"
-              Show          off
-              Position      [80, 145]
-              Direction     up
-              Flipped       off
-              LabelPosition east
-            }

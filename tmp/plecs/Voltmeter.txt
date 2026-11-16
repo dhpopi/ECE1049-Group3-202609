@@ -1,9 +1,0 @@
-Component {
-              Type          Voltmeter
-              Name          "Vm1"
-              Show          on
-              Position      [70, 195]
-              Direction     up
-              Flipped       off
-              LabelPosition west
-            }

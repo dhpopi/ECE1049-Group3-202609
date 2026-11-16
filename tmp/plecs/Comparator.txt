@@ -1,9 +1,0 @@
-Component {
-              Type          Comparator
-              Name          "Comparator"
-              Show          on
-              Position      [120, 125]
-              Direction     right
-              Flipped       off
-              LabelPosition south
-            }
