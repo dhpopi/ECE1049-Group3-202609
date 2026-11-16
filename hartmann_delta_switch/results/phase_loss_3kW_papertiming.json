@@ -1,0 +1,86 @@
+{
+  "phase_loss": {
+    "t_loss_s": 0.00085,
+    "window_before_s": null,
+    "window_after_s": [
+      0.11,
+      0.12
+    ],
+    "before": null,
+    "after": {
+      "Irms_A": [
+        0.405,
+        18.097,
+        18.008
+      ],
+      "Vrms_V": [
+        115.0,
+        115.0,
+        115.0
+      ],
+      "PF": [
+        -0.003,
+        0.9763,
+        0.4678
+      ],
+      "Vdc_mean_V": 399.946,
+      "Vdc_pp_V": 1.429,
+      "Pout_W": 2999.2,
+      "Gref_mean_S": 0.1692
+    },
+    "i1_absmax_after_A": 1.8178,
+    "i2_plus_i3_absmax_A": 1.8178,
+    "Vdc_ripple_2f_V": 0.548,
+    "Vdc_min_after_V": 399.242,
+    "Vdc_max_after_V": 400.67,
+    "Vdc_min_whole_run_V": 384.222,
+    "Gref_max_S": 0.1914,
+    "current_limit_hit": false,
+    "THD_after_percent": [
+      21.88,
+      21.82
+    ]
+  },
+  "control": {
+    "t_loss_s": 0.00085,
+    "window_before_s": null,
+    "window_after_s": [
+      0.11,
+      0.12
+    ],
+    "before": null,
+    "after": {
+      "Irms_A": [
+        8.84,
+        8.84,
+        8.84
+      ],
+      "Vrms_V": [
+        115.0,
+        115.0,
+        115.0
+      ],
+      "PF": [
+        0.9853,
+        0.9853,
+        0.9853
+      ],
+      "Vdc_mean_V": 400.0,
+      "Vdc_pp_V": 0.028,
+      "Pout_W": 3000.0,
+      "Gref_mean_S": 0.0781
+    },
+    "i1_absmax_after_A": 13.7472,
+    "i2_plus_i3_absmax_A": 13.7472,
+    "Vdc_ripple_2f_V": 0.0,
+    "Vdc_min_after_V": 399.986,
+    "Vdc_max_after_V": 400.014,
+    "Vdc_min_whole_run_V": 399.417,
+    "Gref_max_S": 0.0785,
+    "current_limit_hit": false,
+    "THD_after_percent": [
+      5.56,
+      5.56
+    ]
+  }
+}

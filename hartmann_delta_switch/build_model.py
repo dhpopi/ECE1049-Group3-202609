@@ -1,8 +1,21 @@
-"""Build a native, editable PLECS 4.9 switching model from explicit components."""
+"""Build a native, editable PLECS 4.9 switching model from explicit components.
+
+    python build_model.py                # baseline model (default)
+    python build_model.py --phase-loss   # variant with a switchable grid phase 1
+
+The phase-loss variant adds one ideal switch K1 in series with grid phase 1
+(opened at t_loss), a 100 nF + 10 ohm snubber across it (stand-in for the
+EMI-filter capacitance that carries the disconnected phase current), and a
+Step block driving the gate.  Nothing else in the circuit or the controller
+changes, so the run tests the paper's Fig.8(b) claim that the rectifier keeps
+working in two-phase mode without any change of the controller structure.
+"""
 from pathlib import Path
-import json
+import json, sys
 
 ROOT = Path(__file__).resolve().parent
+PHASE_LOSS = '--phase-loss' in sys.argv
+MODEL = 'Hartmann_DeltaSwitch_PhaseLoss' if PHASE_LOSS else 'Hartmann_DeltaSwitch'
 q = lambda x: json.dumps(str(x), ensure_ascii=True)
 parts, wires = [], []
 geometry={}
@@ -51,23 +64,45 @@ Gmax=0.25; Ginit=Pnom/(3*Vph^2);
 % Precharged capacitor; this baseline is not an inrush/precharge-hardware simulation.
 Vinit=400; Tstop=0.12;
 '''
-(ROOT/'parameters.m').write_text(init)
+if PHASE_LOSS:
+    init += 't_loss=0.06;\n'
+if not PHASE_LOSS:
+    (ROOT/'parameters.m').write_text(init)
 
 component('ThreePhaseVoltageSource','Grid_115Vrms',100,190,{'V':'sqrt(2)*Vph','w':'fline','phi':'pi/2','neutral':1},'up')
 component('Ground','Neutral',55,275,{},'up')
 ne=[('Grid_115Vrms',4),('Neutral',1)]
 for i,y in enumerate([140,190,240],1):
-    component('Resistor',f'Rw{i}',180,y,{'R':'RL'})
-    component('Inductor',f'L{i}',260,y,{'L':'Lboost','i_init':'0'})
-    component('Ammeter',f'I{i}',330,y)
+    dx = 80 if (PHASE_LOSS and i == 1) else 0   # make room for K1 in phase 1
+    component('Resistor',f'Rw{i}',180+dx,y,{'R':'RL'})
+    component('Inductor',f'L{i}',260+dx,y,{'L':'Lboost','i_init':'0'})
+    component('Ammeter',f'I{i}',330+dx,y)
     component('Voltmeter',f'V{i}',145,330+65*(i-1),{},'up')
-    net([('Grid_115Vrms',i),(f'Rw{i}',1),(f'V{i}',1)],(140,y))
+    if PHASE_LOSS and i == 1:
+        # V1 stays on the grid side: the controller keeps measuring the mains
+        # voltage after the phase is lost (Fig.6, controller structure unchanged).
+        # A PLECS terminal may appear in only one Connection, so the snubber is
+        # attached as an extra branch here instead of in a second connection.
+        net([('Grid_115Vrms',1),('K1',1),(f'V{i}',1),('C_loss',2)],(140,y))
+        net([('K1',2),(f'Rw{i}',1),('R_loss',2)])
+    else:
+        net([('Grid_115Vrms',i),(f'Rw{i}',1),(f'V{i}',1)],(140,y))
     ne.append((f'V{i}',2))
     net([(f'Rw{i}',2),(f'L{i}',1)])
     net([(f'L{i}',2),(f'I{i}',1)])
-    tag(f'I{i}',2,f'AC{i}',390,y)
-    tag(f'I{i}',3,f'i{i}',330,y-35,True,True)
+    tag(f'I{i}',2,f'AC{i}',390+dx,y)
+    tag(f'I{i}',3,f'i{i}',330+dx,y-35,True,True)
     tag(f'V{i}',3,f'v{i}',200,330+65*(i-1),True,True)
+if PHASE_LOSS:
+    # Ideal switch in series with grid phase 1, opened at t_loss.
+    component('Switch','K1',180,140,{'s_init':'1'})
+    # Snubber across the switch: stand-in for the EMI-filter capacitance that
+    # carries the phase-1 inductor current after the break, plus damping.
+    component('Capacitor','C_loss',160,60,{'C':'100e-9','v_init':'0'},'down')
+    component('Resistor','R_loss',200,60,{'R':'10'},'down')
+    component('Step','LossStep',40,100,{'Time':'t_loss','Before':'1','After':'0','DataType':'10'})
+    net([('C_loss',1),('R_loss',1)],(180,40))
+    signal('LossStep',1,'K1',3)
 net(ne,(55,275))
 
 # Six-diode bridge, explicitly wired at the phase midpoints.
@@ -135,8 +170,9 @@ double d=PAR(3)*e;
 if((raw<=0 && d<0)||(raw>=PAR(4) && d>0)) d=0;
 ContDeriv(0)=d;
 '''
-for name,code in [('controller_declarations.c',declarations),('controller_output.c',output),('controller_derivative.c',derivative)]:
-    (ROOT/name).write_text(code)
+if not PHASE_LOSS:
+    for name,code in [('controller_declarations.c',declarations),('controller_output.c',output),('controller_derivative.c',derivative)]:
+        (ROOT/name).write_text(code)
 component('CScript','Hartmann_Control',310,790,{
  'NumInputs':'[3 3 1 1]','NumOutputs':'[6 3 1]','NumContStates':1,'NumDiscStates':0,
  'NumZCSignals':11,'DirectFeedthrough':1,'Ts':0,'TerminalBasedSampleTimes':1,
@@ -223,7 +259,7 @@ annotations=[(400,35,'Hartmann 2012 | Three-phase Delta-switch rectifier | 5 kW'
  (650,950,'Baseline: precharged 400 V bus; no EMI filter or thermal model. Parameters: Simulation > Simulation Parameters > Initialization.')]
 ann='\n'.join(f'Annotation {{ Name {q(t)} Position [{x}, {y}] }}' for x,y,t in annotations)
 header=f'''Plecs {{
-Name "Hartmann_DeltaSwitch"
+Name "{MODEL}"
 Version "4.9"
 CircuitModel "ContStateSpace"
 StartTime "0"
@@ -246,6 +282,6 @@ ZoomFactor 1
 SliderPosition [0, 0]
 ShowBrowser off
 '''
-path=ROOT/'Hartmann_DeltaSwitch.plecs'
+path=ROOT/(MODEL+'.plecs')
 path.write_text(header+'\n'.join(parts+wires)+'\n'+ann+'\n}\n}\n')
 print(path)

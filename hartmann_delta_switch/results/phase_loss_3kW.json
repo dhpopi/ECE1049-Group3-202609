@@ -1,0 +1,126 @@
+{
+  "phase_loss": {
+    "t_loss_s": 0.06,
+    "window_before_s": [
+      0.05,
+      0.0598
+    ],
+    "window_after_s": [
+      0.11,
+      0.12
+    ],
+    "before": {
+      "Irms_A": [
+        8.819,
+        8.789,
+        8.91
+      ],
+      "Vrms_V": [
+        114.47,
+        114.54,
+        115.98
+      ],
+      "PF": [
+        0.9851,
+        0.985,
+        0.9857
+      ],
+      "Vdc_mean_V": 400.007,
+      "Vdc_pp_V": 0.031,
+      "Pout_W": 3000.1,
+      "Gref_mean_S": 0.0781
+    },
+    "after": {
+      "Irms_A": [
+        0.426,
+        19.775,
+        19.69
+      ],
+      "Vrms_V": [
+        115.0,
+        115.0,
+        115.0
+      ],
+      "PF": [
+        -0.0079,
+        0.9695,
+        0.415
+      ],
+      "Vdc_mean_V": 400.135,
+      "Vdc_pp_V": 3.396,
+      "Pout_W": 3002.0,
+      "Gref_mean_S": 0.183
+    },
+    "i1_absmax_after_A": 1.8215,
+    "i2_plus_i3_absmax_A": 1.8215,
+    "Vdc_ripple_2f_V": 0.639,
+    "Gref_max_S": 0.1909,
+    "current_limit_hit": false,
+    "THD_after_percent": [
+      23.73,
+      23.67
+    ]
+  },
+  "control": {
+    "t_loss_s": 0.06,
+    "window_before_s": [
+      0.05,
+      0.0598
+    ],
+    "window_after_s": [
+      0.11,
+      0.12
+    ],
+    "before": {
+      "Irms_A": [
+        8.819,
+        8.789,
+        8.91
+      ],
+      "Vrms_V": [
+        114.47,
+        114.54,
+        115.98
+      ],
+      "PF": [
+        0.9851,
+        0.985,
+        0.9857
+      ],
+      "Vdc_mean_V": 400.007,
+      "Vdc_pp_V": 0.031,
+      "Pout_W": 3000.1,
+      "Gref_mean_S": 0.0781
+    },
+    "after": {
+      "Irms_A": [
+        8.84,
+        8.84,
+        8.84
+      ],
+      "Vrms_V": [
+        115.0,
+        115.0,
+        115.0
+      ],
+      "PF": [
+        0.9853,
+        0.9853,
+        0.9853
+      ],
+      "Vdc_mean_V": 400.0,
+      "Vdc_pp_V": 0.028,
+      "Pout_W": 3000.0,
+      "Gref_mean_S": 0.0781
+    },
+    "i1_absmax_after_A": 13.7472,
+    "i2_plus_i3_absmax_A": 13.7472,
+    "Vdc_ripple_2f_V": 0.0,
+    "Gref_max_S": 0.0785,
+    "current_limit_hit": false,
+    "THD_after_percent": [
+      5.56,
+      5.56
+    ]
+  }
+}

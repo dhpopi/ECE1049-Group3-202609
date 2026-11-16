@@ -1,0 +1,133 @@
+{
+  "phase_loss": {
+    "t_loss_s": 0.06,
+    "window_before_s": [
+      0.0498,
+      0.0598
+    ],
+    "window_after_s": [
+      0.11,
+      0.12
+    ],
+    "before": {
+      "Irms_A": [
+        14.75,
+        14.75,
+        14.75
+      ],
+      "Vrms_V": [
+        115.0,
+        115.0,
+        115.0
+      ],
+      "PF": [
+        0.9853,
+        0.9853,
+        0.9853
+      ],
+      "Vdc_mean_V": 400.004,
+      "Vdc_pp_V": 0.049,
+      "Pout_W": 5000.1,
+      "Gref_mean_S": 0.1306
+    },
+    "after": {
+      "Irms_A": [
+        0.483,
+        45.181,
+        45.141
+      ],
+      "Vrms_V": [
+        115.0,
+        115.0,
+        115.0
+      ],
+      "PF": [
+        -0.0316,
+        0.7844,
+        -0.1254
+      ],
+      "Vdc_mean_V": 337.529,
+      "Vdc_pp_V": 7.376,
+      "Pout_W": 3560.3,
+      "Gref_mean_S": 0.5
+    },
+    "i1_absmax_after_A": 1.968,
+    "i2_plus_i3_absmax_A": 1.968,
+    "Vdc_ripple_2f_V": 1.223,
+    "Vdc_min_after_V": 333.94,
+    "Vdc_max_after_V": 341.317,
+    "Vdc_min_whole_run_V": 333.94,
+    "Gref_max_S": 0.5,
+    "current_limit_hit": true,
+    "THD_after_percent": [
+      17.73,
+      17.54
+    ],
+    "Gmax_used_S": 0.5
+  },
+  "control": {
+    "t_loss_s": 0.06,
+    "window_before_s": [
+      0.0498,
+      0.0598
+    ],
+    "window_after_s": [
+      0.11,
+      0.12
+    ],
+    "before": {
+      "Irms_A": [
+        14.75,
+        14.75,
+        14.75
+      ],
+      "Vrms_V": [
+        115.0,
+        115.0,
+        115.0
+      ],
+      "PF": [
+        0.9853,
+        0.9853,
+        0.9853
+      ],
+      "Vdc_mean_V": 400.004,
+      "Vdc_pp_V": 0.049,
+      "Pout_W": 5000.1,
+      "Gref_mean_S": 0.1306
+    },
+    "after": {
+      "Irms_A": [
+        14.75,
+        14.749,
+        14.749
+      ],
+      "Vrms_V": [
+        115.0,
+        115.0,
+        115.0
+      ],
+      "PF": [
+        0.9853,
+        0.9853,
+        0.9853
+      ],
+      "Vdc_mean_V": 400.0,
+      "Vdc_pp_V": 0.046,
+      "Pout_W": 5000.0,
+      "Gref_mean_S": 0.1306
+    },
+    "i1_absmax_after_A": 22.1089,
+    "i2_plus_i3_absmax_A": 22.1089,
+    "Vdc_ripple_2f_V": 0.0,
+    "Vdc_min_after_V": 399.977,
+    "Vdc_max_after_V": 400.023,
+    "Vdc_min_whole_run_V": 398.968,
+    "Gref_max_S": 0.1311,
+    "current_limit_hit": false,
+    "THD_after_percent": [
+      3.8,
+      3.8
+    ]
+  }
+}

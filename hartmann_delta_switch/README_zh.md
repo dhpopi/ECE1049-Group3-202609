@@ -1,6 +1,8 @@
-# Hartmann 三相 Delta-switch 整流器：PLECS 基础复现
+# Hartmann 三相 Delta-switch 整流器：PLECS 开关级复现
 
-本目录包含实际在本机 **PLECS Standalone 4.9** 中运行的开关级模型，不是平均模型，也不是用 Python 替代 PLECS 求解。
+[中文](README_zh.md) | [English](README_en.md)
+
+本目录包含实际在 **PLECS Standalone** 中运行的开关级模型，不是平均模型，也不是用 Python 替代 PLECS 求解。模型文件为 PLECS 4.9 格式；`results/` 中的三相 baseline 由 PLECS 4.9 产生，缺相工况由本机 PLECS 5.0.2 运行（5.0 可直接打开 4.9 模型，无需转换）。
 
 ## 打开和运行
 
@@ -11,6 +13,8 @@
 5. 在 **Simulation Parameters → Initialization** 中修改参数。模型内嵌完整初始化代码，不依赖外部 MATLAB 文件。`parameters.m` 是这份代码的便于阅读副本，单独修改该副本不会自动改变模型。
 
 默认是论文 Fig.8(a) 的 **800 Hz、115 V 相电压有效值、400 V、5 kW** 工况。改 `fline=400` 可检查 400 Hz 工况；改 `Vinit=280` 可检查预充电后电压恢复。
+
+缺相工况用单独生成的变体 `Hartmann_DeltaSwitch_PhaseLoss.plecs`，见下文「缺相运行」。
 
 ## 与论文的对应
 
@@ -26,6 +30,7 @@
 | 三角波 PWM | Fig.7，式(15)–(17) | 单一 0–1 三角载波；比较 `carrier > vr_ij/Vdc` |
 | 扇区钳位 | Table III | 两相电压同号时，该双向支路两只 MOSFET 均关断；反向器件常通，正向器件 PWM |
 | 外环 | Fig.6，VI 节 | PI 输出电导，带电导限幅和积分抗饱和 |
+| 缺相运行 | Fig.8(b)、Fig.14 | 见下文：单相断开后控制器不加改动继续两相运行 |
 
 表 III 的六扇区控制可由三相电压符号统一实现，因此无需切换电流调节器本身。`Hartmann_Control` 是可编辑的 C-Script，代码同时保存为 `controller_*.c` 阅读副本。三角载波是 PLECS 原生模块，PWM 比较和相电压过零均注册了零交叉事件，门极只在求解器主步更新。
 
@@ -65,17 +70,62 @@
 
 280 V 恢复工况的母线峰值约 406.58 V，瞬态最大相电流约 40.79 A。这是闭环恢复测试，**没有包含从零电压上电的预充电硬件**。
 
-脚本还检查三相电流和、各扇区的关断钳位、有限数值、输出稳压和功率，并将最大积分步长从 `1/(72k*10)` 降至 `1/(72k*40)` 进行收敛比较。相同的 `RelTol=1e-6`、`AbsTol=1e-8` 下，详细差值写在验证 JSON 末尾。
+脚本还检查三相电流和、各扇区的关断钳位、有限数值、输出稳压和功率。**关于收敛性检查的说明：** 现有两版结果把 `MaxStep` 从 `1/(72k*10)` 改为 `1/(72k*40)`，但两者的 `ΔVdc`、`ΔP`、`ΔIrms` 分别只有 5e-11 V、1e-9 W、2e-10 A，说明该步长参数实际上没有起约束作用（步长由 0.5 µs 的输出时刻和误差控制决定）。因此这一项**不构成有效的收敛性证明**，需要改成真正会改变步长的对照（例如改用固定步长求解器，或把输出采样放粗）。
 
 THD 使用最后 8 个完整工频周期，均匀 2 MHz 采样，取 2–40 次工频谐波，除以基波有效值；因此不包含 72 kHz 附近的开关谐波。PF 则由时域真实功率除以 Vrms×Irms 计算，包含电流纹波。不要将这两个指标混为一谈。
 
 800 Hz 下 P 型电流环有可见基波跟踪误差与相移，这解释了 PF 低于 400 Hz 工况；本版未用额外谐振控制或电流导数前馈改变论文的控制结构。
 
+## 缺相运行（Fig.8(b) / Fig.14）
+
+变体模型 `Hartmann_DeltaSwitch_PhaseLoss.plecs` 由生成器一次性产出：
+
+```text
+python build_model.py --phase-loss
+```
+
+相对 baseline 只加了三样东西，**控制器和主电路其余部分一行未改**：
+
+| 新增元件 | 作用 |
+|---|---|
+| `K1` | A 相电源侧串联理想开关，`s_init=1`，在 `t_loss` 时刻断开 |
+| `C_loss` + `R_loss` | 100 nF + 10 Ω 跨接断口，代表断口杂散电容，给断相电感电流提供通路并阻尼；若用 3.4 µF 则该相在 800 Hz 仍残留约 3.8 A，故取 100 nF |
+| `LossStep` | Step（1→0，时刻 `t_loss`），驱动 K1 栅极 |
+
+`t_loss` 是新的模型变量（默认 0.06 s），可在 `ModelVars` 中覆盖。电压测量 `v1` 仍接在开关的电网侧，因此控制器看到的三相电压在缺相前后都保持正常——这正是论文「控制器结构不变」的前提。
+
+运行与出图（每次运行结束后脚本自动 `plecs.close()`，不在 PLECS 里留下打开的模型）：
+
+```text
+python run_phase_loss.py --pnom 3000 --tloss 0.06    --tag phase_loss_3kW
+python run_phase_loss.py --pnom 3000 --tloss 0.00085 --tag phase_loss_3kW_papertiming
+python run_phase_loss.py --pnom 5000 --tloss 0.06    --tag phase_loss_5kW
+python run_phase_loss.py --pnom 5000 --tloss 0.06 --gmax 0.5 --tag phase_loss_5kW_gmax05
+```
+
+结果（800 Hz；断相后窗口取最后 8 个工频周期）：
+
+| 工况 | i1 (rms) | i2 / i3 (rms) | THD | 平均 Vdc | 实际功率 | 限幅 |
+|---|---:|---:|---:|---:|---:|---|
+| 3 kW，60 ms 断相 | 0.43 A | 19.8 / 19.7 A | 23.7% | 400.1 V | 3002 W | 未触发 |
+| 3 kW，0.85 ms 断相（论文时序） | 0.41 A | 18.1 / 18.0 A | 21.9% | 399.9 V | 2999 W | 未触发 |
+| 5 kW，60 ms 断相，Gmax=0.25 | 0.45 A | 27.3 / 27.2 A | 27.0% | 340.5 V（仍在下降） | 3624 W | 触发（Gref=0.25 S） |
+| 5 kW，60 ms 断相，Gmax=0.5 | 0.48 A | 45.2 / 45.1 A | 17.7% | 337.5 V | 3560 W | 触发（Gref=0.5 S） |
+
+观察：
+
+1. **3 kW 两相运行成立**：断相后 `i1≈0`，剩余两相各约 18–20 A，母线回到 400 V、功率维持 3 kW；60 ms 断相时母线瞬态最低约 384.6 V，约 50 ms 恢复。0.85 ms 断相（论文 Fig.8(b) 的时序）终态与之基本一致。
+2. **5 kW 两相运行不成立**：默认 Gmax 下外环饱和、母线跌到约 340 V；把 Gmax 放宽到 0.5 S 后 `Gref` 又顶到 0.5 S、电流涨到 45 A，母线仍停在约 337 V。说明限制来自**调制器占空比饱和**而不是模型自加的电导限幅，即该硬件参数下两相可输出的最大电压不足。
+3. 这与论文自洽：Fig.8(b) 两相跑 3 kW、Fig.14 两相跑 2.25 kW，论文没有在 5 kW 下演示缺相。
+4. 两相时 `i2 = -i3` 必须逐时刻成立，所以两相 PF 必然不对称（一个约 0.97、一个约 0.4），这是拓扑性质，不是模型错误。
+
+局限：没有 EMI 滤波器，因此看不到论文 Fig.14(b) 中滤波器电容引起的断相电感电流振荡；没有实现「检测到缺相后把 S12 钳死」的附加逻辑；电流环仍是 P 型（PF 0.985），绝对的两相功率上限可能比硬件略保守。
+
 ## 本版范围
 
-已完成基本功率拓扑、论文所述 PWM/钳位控制结构、直流闭环稳压、正常三相稳态及母线恢复验证。
+已完成基本功率拓扑、论文所述 PWM/钳位控制结构、直流闭环稳压、正常三相稳态、母线恢复以及**缺相两相运行**。
 
-尚未建立 EMI 滤波器、寄生电容/共模路径、实际器件热损耗、非线性电感、预充电电阻/二极管/晶闸管，也未验证缺相工况。因此不能用此模型宣称复现了论文的效率、共模 EMI、实物启动过程或缺相性能。400 Hz 的 THD 数值接近论文结果，仍不代表完整硬件复现；滤波器、功率等级和损耗条件不同。
+尚未建立 EMI 滤波器、寄生电容/共模路径、实际器件热损耗、非线性电感、预充电电阻/二极管/晶闸管；缺相检测与钳位逻辑也未实现。因此不能用此模型宣称复现了论文的效率、共模 EMI、实物启动过程或完整的缺相容错性能。400 Hz 的 THD 数值接近论文结果，仍不代表完整硬件复现；滤波器、功率等级和损耗条件不同。
 
 ## 重新自动验证或重建
 
@@ -87,7 +137,13 @@ python run_verify.py
 
 需要 Python 的 `numpy`、`matplotlib`，XML-RPC 使用标准库。普通手动打开运行模型不依赖 Python 或 RPC。
 
-`python build_model.py` 可重新生成模型及参数/控制器阅读副本；它会覆盖当前目录中同名生成文件，手动修改原理图后请先另存。自动验证不会改动初始化参数，只通过本次仿真覆盖选项设置测试工况。
+```text
+python build_model.py                # 重新生成 baseline 及参数/控制器阅读副本
+python build_model.py --phase-loss   # 生成缺相变体（不覆盖 baseline）
+```
 
-接口及 C-Script 事件处理参考 Plexim 官方文档：[Simulation Scripts](https://docs.plexim.com/plecs/latest/scripting/)、[C-Scripts](https://docs.plexim.com/plecs/latest/c-scripts/)。模型按本机 4.9 元件及示例文件格式生成，并以本机实际运行结果为准。
+`build_model.py` 会覆盖当前目录中同名生成文件，手动修改原理图后请先另存；`--phase-loss` 只写 `Hartmann_DeltaSwitch_PhaseLoss.plecs`，不会改动 baseline、`parameters.m` 或 `controller_*.c`。自动验证不会改动初始化参数，只通过本次仿真覆盖选项设置测试工况。
 
+PLECS 的两条使用约束（调试时踩过）：一个端子只能出现在一条 `Connection` 里，多路连接必须用 `Branch`；同名模型重复 `load` 不会从磁盘重载，改了文件要 `close` 后再 `load`。
+
+接口及 C-Script 事件处理参考 Plexim 官方文档：[Simulation Scripts](https://docs.plexim.com/plecs/latest/scripting/)、[C-Scripts](https://docs.plexim.com/plecs/latest/c-scripts/)。模型按 PLECS 4.9 元件及示例文件格式生成，缺相变体在 PLECS 5.0.2 中验证运行，并以本机实际运行结果为准。
